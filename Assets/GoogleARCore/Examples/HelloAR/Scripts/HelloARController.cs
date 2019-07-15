@@ -17,9 +17,9 @@
 //
 // </copyright>
 //-----------------------------------------------------------------------
+// edited by AG
 
-namespace GoogleARCore.Examples.HelloAR
-{
+namespace GoogleARCore.Examples.HelloAR {
     using System.Collections.Generic;
     using GoogleARCore;
     using GoogleARCore.Examples.Common;
@@ -27,102 +27,87 @@ namespace GoogleARCore.Examples.HelloAR
     using UnityEngine.UI;
     using System.Collections;
     using UnityEngine.EventSystems;
-#if UNITY_EDITOR
-    // Set up touch input propagation while using Instant Preview in the editor.
-    using Input = InstantPreviewInput;
-#endif
 
+    #if UNITY_EDITOR
+      // Set up touch input propagation while using Instant Preview in the editor.
+      using Input = InstantPreviewInput;
+    #endif
     /// <summary>
     /// Controls the HelloAR example.
     /// </summary>
-    public class HelloARController : MonoBehaviour
-    {
+
+    public class HelloARController : MonoBehaviour {
+
         int currentStep = 0;
         private int[] step = { 4, 7 };
 
-        private void playBackwards(Animator[]  AnimatorsGameObjectlist)
-        {
-            for (int i = 0; i < AnimatorsGameObjectlist.Length; i++)
-            {
+        private void playBackwards(Animator[]  AnimatorsGameObjectlist) {
+
+            for (int i = 0; i < AnimatorsGameObjectlist.Length; i++) {
+
                 AnimatorsGameObjectlist[i].speed = -0.1f;
                 AnimatorsGameObjectlist[i].Play("origami", -1, AnimatorsGameObjectlist[i].GetCurrentAnimatorStateInfo(0).normalizedTime);
 
                 float targetTime = step[currentStep];
                 targetTime -= Time.deltaTime;
 
-                if (targetTime <= 0.0f)
-                {
+                if (targetTime <= 0.0f) {
                     AnimatorsGameObjectlist[i].speed = 0.0f;
                 }
             }
         }
-        private void playForwards(Animator[]  AnimatorsGameObjectlist)
-        {
-            for (int i = 0; i < AnimatorsGameObjectlist.Length; i++)
-            {
+
+        private void playForwards(Animator[]  AnimatorsGameObjectlist) {
+
+            for (int i = 0; i < AnimatorsGameObjectlist.Length; i++) {
+
                 AnimatorsGameObjectlist[i].speed = 0.1f;
-                AnimatorsGameObjectlist[i].Play("origami", -1, AnimatorsGameObjectlist[i].GetCurrentAnimatorStateInfo(0).normalizedTime);
+                AnimatorsGameObjectlist[i].Play("origami", -1 , AnimatorsGameObjectlist[i].GetCurrentAnimatorStateInfo(0).normalizedTime);
 
                 float targetTime = step[currentStep];
                 targetTime -= Time.deltaTime;
 
-                if (targetTime <= 0.0f)
-                {
+                if (targetTime <= 0.0f) {
                     AnimatorsGameObjectlist[i].speed = 0.0f;
                 }
             }
         }
-        private void displayLevelComplete(Animator[] AnimatorsGameObjectlist)
-        {
-            if(AnimatorsGameObjectlist!=null)
-            {
-                for (int i = 0; i < AnimatorsGameObjectlist.Length; i++)
-                {
-                    if (AnimatorsGameObjectlist[i].GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
-                    {
+
+        private void displayLevelComplete(Animator[] AnimatorsGameObjectlist) {
+
+            if(AnimatorsGameObjectlist!=null) {
+
+                for (int i = 0; i < AnimatorsGameObjectlist.Length; i++) {
+
+                    if (AnimatorsGameObjectlist[i].GetCurrentAnimatorStateInfo(0).normalizedTime > 1) {
                         levelComplete.SetActive(true);
                     }
                 }
             }
 
         }
+
         bool modelExists = false;
-        /// <summary>
-        /// The first-person camera being used to render the passthrough camera image (i.e. AR background).
-        /// </summary>
+
+        // The first-person camera being used to render the passthrough camera image (i.e. AR background).
         public Camera FirstPersonCamera;
 
-        /// <summary>
-        /// A prefab for tracking and visualizing detected planes.
-        /// </summary>
+        // A prefab for tracking and visualizing detected planes.
         public GameObject DetectedPlanePrefab;
 
-        /// <summary>
-        /// A model to place when a raycast from a user touch hits a plane.
-        /// </summary>
+        // A model to place when a raycast from a user touch hits a plane.
         public GameObject AndyPlanePrefab;
 
-        /// <summary>
-        /// A model to place when a raycast from a user touch hits a feature point.
-        /// </summary>
+        // A model to place when a raycast from a user touch hits a feature point.
         public GameObject AndyPointPrefab;
 
-        /// <summary>
-        /// The rotation in degrees need to apply to model when the Andy model is placed.
-        /// </summary>
-
+        // The rotation in degrees need to apply to model when the Andy model is placed.
         private const float k_ModelRotation = 180.0f;
 
-        /// <summary>
-        /// True if the app is in the process of quitting due to an ARCore connection error, otherwise false.
-        /// </summary>
-
+        // True if the app is in the process of quitting due to an ARCore connection error, otherwise false.
         private bool m_IsQuitting = false;
 
-        /// <summary>
-        /// The Unity Update() method.
-        /// </summary>
-        ///
+        // The Unity Update() method.
         public Button backButton, forwardButton;
 
         public GameObject levelComplete;
@@ -131,8 +116,8 @@ namespace GoogleARCore.Examples.HelloAR
 
         private Animator[] AnimatorsGameObjectlist=null;
 
-        public void Update()
-        {
+        public void Update() {
+
             _UpdateApplicationLifecycle();
 
             displayLevelComplete(AnimatorsGameObjectlist);
@@ -140,38 +125,35 @@ namespace GoogleARCore.Examples.HelloAR
             // If the player has not touched the screen, we are done with this update.
             Touch touch;
 
-            if (Input.touchCount < 1 || (touch = Input.GetTouch(0)).phase != TouchPhase.Began)
-            {
+            if (Input.touchCount < 1 || (touch = Input.GetTouch(0)).phase != TouchPhase.Began) {
                 return;
             }
 
-            if(!EventSystem.current.IsPointerOverGameObject() || playScreen.activeSelf == true){
+            if(!EventSystem.current.IsPointerOverGameObject() || playScreen.activeSelf == true) {
+
             // Raycast against the location the player touched to search for planes.
             TrackableHit hit;
-            TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinPolygon |
-                TrackableHitFlags.FeaturePointWithSurfaceNormal;
+            TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinPolygon | TrackableHitFlags.FeaturePointWithSurfaceNormal;
 
-            if (Frame.Raycast(touch.position.x, touch.position.y, raycastFilter, out hit))
-            {
+            if (Frame.Raycast(touch.position.x, touch.position.y, raycastFilter, out hit)) {
+
                 // Use hit pose and camera pose to check if hittest is from the
                 // back of the plane, if it is, no need to create the anchor.
-                if ((hit.Trackable is DetectedPlane) &&
-                    Vector3.Dot(FirstPersonCamera.transform.position - hit.Pose.position,
-                        hit.Pose.rotation * Vector3.up) < 0)
-                {
+                if ((hit.Trackable is DetectedPlane) && Vector3.Dot(FirstPersonCamera.transform.position - hit.Pose.position, hit.Pose.rotation * Vector3.up) < 0) {
                     Debug.Log("Hit at back of the current DetectedPlane");
                 }
-                else if(modelExists==false)
-                {
+
+                else if(modelExists==false) {
+
                     // Choose the Andy model for the Trackable that got hit.
                     GameObject prefab;
-                    if (hit.Trackable is FeaturePoint)
-                    {
+
+                    if (hit.Trackable is FeaturePoint) {
                         prefab = AndyPointPrefab;
                         modelExists = true;
                     }
-                    else
-                    {
+
+                    else {
                         prefab = AndyPlanePrefab;
                         modelExists = true;
                     }
@@ -184,94 +166,88 @@ namespace GoogleARCore.Examples.HelloAR
                     andyObject.transform.Translate(0, 0.3f, 0, Space.Self);
 
                     AnimatorsGameObjectlist = andyObject.GetComponentsInChildren<Animator>();
-                    for(int i = 0; i < AnimatorsGameObjectlist.Length; i++)
-                    {
+
+                    for(int i = 0; i < AnimatorsGameObjectlist.Length; i++) {
                         AnimatorsGameObjectlist[i].Play("origami", -1, 0f);
                         AnimatorsGameObjectlist[i].speed = 0.05f;
                     }
+
                     backButton.onClick.AddListener(() => playBackwards(AnimatorsGameObjectlist));
                     forwardButton.onClick.AddListener(() => playForwards(AnimatorsGameObjectlist));
-                    {                  // Create an anchor to allow ARCore to track the hitpoint as understanding of the physical
-                                       // world evolves.
+
+                    {
+                        // Create an anchor to allow ARCore to track the hitpoint as understanding of the physical world evolves.
                         var anchor = hit.Trackable.CreateAnchor(hit.Pose);
 
                         // Make Andy model a child of the anchor.
                         andyObject.transform.parent = anchor.transform;
+
                     }
                 }
             }
           }
         }
-            /// <summary>
-            /// Check and update the application lifecycle.
-            /// </summary>
-            private void _UpdateApplicationLifecycle()
-            {
+
+        // Check and update the application lifecycle.
+        private void _UpdateApplicationLifecycle() {
+
                 // Exit the app when the 'back' button is pressed.
-                if (Input.GetKey(KeyCode.Escape))
-                {
+                if (Input.GetKey(KeyCode.Escape)) {
                     Application.Quit();
                 }
 
                 // Only allow the screen to sleep when not tracking.
-                if (Session.Status != SessionStatus.Tracking)
-                {
+                if (Session.Status != SessionStatus.Tracking) {
                     const int lostTrackingSleepTimeout = 15;
                     Screen.sleepTimeout = lostTrackingSleepTimeout;
                 }
-                else
-                {
+
+                else {
                     Screen.sleepTimeout = SleepTimeout.NeverSleep;
                 }
 
-                if (m_IsQuitting)
-                {
+                if (m_IsQuitting) {
                     return;
                 }
 
                 // Quit if ARCore was unable to connect and give Unity some time for the toast to appear.
-                if (Session.Status == SessionStatus.ErrorPermissionNotGranted)
-                {
+                if (Session.Status == SessionStatus.ErrorPermissionNotGranted) {
                     _ShowAndroidToastMessage("Camera permission is needed to run this application.");
                     m_IsQuitting = true;
                     Invoke("_DoQuit", 0.5f);
                 }
-                else if (Session.Status.IsError())
-                {
+
+                else if (Session.Status.IsError()) {
                     _ShowAndroidToastMessage("ARCore encountered a problem connecting.  Please start the app again.");
                     m_IsQuitting = true;
                     Invoke("_DoQuit", 0.5f);
                 }
             }
 
-            /// <summary>
-            /// Actually quit the application.
-            /// </summary>
-            private void _DoQuit()
-            {
+            // Actually quit the application.
+            private void _DoQuit() {
                 Application.Quit();
             }
 
-            /// <summary>
-            /// Show an Android toast message.
-            /// </summary>
+            // Show an Android toast message.
             /// <param name="message">Message string to show in the toast.</param>
-            private void _ShowAndroidToastMessage(string message)
-            {
+            private void _ShowAndroidToastMessage(string message) {
+
                 AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
                 AndroidJavaObject unityActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 
-                if (unityActivity != null)
-                {
+                if (unityActivity != null) {
+
                     AndroidJavaClass toastClass = new AndroidJavaClass("android.widget.Toast");
                     unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
                     {
-                        AndroidJavaObject toastObject = toastClass.CallStatic<AndroidJavaObject>("makeText", unityActivity,
-                            message, 0);
+
+                        AndroidJavaObject toastObject = toastClass.CallStatic<AndroidJavaObject>("makeText", unityActivity, message, 0);
                         toastObject.Call("show");
+
                     }));
+
                 }
             }
         }
-
 }
