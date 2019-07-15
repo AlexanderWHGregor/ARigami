@@ -32,10 +32,8 @@ namespace GoogleARCore.Examples.HelloAR {
       // Set up touch input propagation while using Instant Preview in the editor.
       using Input = InstantPreviewInput;
     #endif
-    /// <summary>
-    /// Controls the HelloAR example.
-    /// </summary>
 
+    // Controls the HelloAR example.
     public class HelloARController : MonoBehaviour {
 
         int currentStep = 0;
